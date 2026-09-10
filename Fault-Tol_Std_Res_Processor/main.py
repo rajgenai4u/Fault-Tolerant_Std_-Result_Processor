@@ -5,8 +5,7 @@ Main execution module. Processes a dataset of student records inside a
 fault-tolerant loop that catches errors, logs issues, and continues execution.
 """
 
-# FIX: Changed package import from 'result_processor' to 'results_processor'
-# to match the submitted folder name.
+# Import validated processing routines, logger utility, and custom exceptions from the results_processor package
 from results_processor import (
     validate_student_record,
     compute_results,
@@ -14,6 +13,7 @@ from results_processor import (
     InvalidMarksError,
     MissingStudentInfoError
 )
+
 
 def process_student_batch(student_records):
     """
@@ -26,10 +26,11 @@ def process_student_batch(student_records):
     Returns:
         list: Collection of processed summary result dictionaries for valid students.
     """
-    # Initialize logger configuration
+    # Initialize logger configuration to record process events and errors
     logger = setup_logger()
     logger.info(f"Starting batch result processing for {len(student_records)} student records.")
-    
+
+    # Initialize container to hold successfully processed output dicts
     successful_results = []
 
     # Loop through each student record individually to ensure fault tolerance
@@ -55,10 +56,13 @@ def process_student_batch(student_records):
         # Fault-tolerant exception handling catches specific error types independently
         except MissingStudentInfoError as e:
             logger.error(f"Missing Information Error [{student_identifier}]: {e}")
+            
         except InvalidMarksError as e:
             logger.error(f"Invalid Marks Error [{student_identifier}]: {e}")
+            
         except ZeroDivisionError as e:
             logger.error(f"Calculation Error [{student_identifier}]: {e}")
+            
         except Exception as e:
             # Catch any unexpected runtime errors without terminating batch execution
             logger.critical(f"Unexpected Critical Error [{student_identifier}]: {e}", exc_info=True)
@@ -68,6 +72,7 @@ def process_student_batch(student_records):
         f"Batch processing complete. "
         f"Successfully processed {len(successful_results)} out of {len(student_records)} records."
     )
+
     return successful_results
 
 
@@ -82,4 +87,5 @@ if __name__ == "__main__":
         {"student_id": "S106", "name": "Frank Castle", "marks": [70, 80, 90]},             # Incorrect subject count
     ]
 
+    # Execute batch processing
     results = process_student_batch(dataset)
