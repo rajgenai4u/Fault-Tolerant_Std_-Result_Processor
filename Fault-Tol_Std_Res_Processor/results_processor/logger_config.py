@@ -12,11 +12,11 @@ import os
 def setup_logger():
     """
     Initializes and configures the 'StudentResultProcessor' logger instance.
-    
+
     Creates:
-      - File Handler: Saves output logs to 'logs/student_processor.log'.
-      - Console Handler: Displays log messages directly in the terminal interface.
-      
+        - File Handler: Saves output logs to 'logs/student_processor.log'.
+        - Console Handler: Displays log messages directly in the terminal interface.
+
     Returns:
         logging.Logger: Configured logger instance ready for use.
     """
@@ -25,17 +25,19 @@ def setup_logger():
     if not os.path.exists(logs_dir):
         os.makedirs(logs_dir)
 
+    # Retrieve or create a named logger instance for the application
     logger = logging.getLogger("StudentResultProcessor")
+    
+    # Set logging threshold to INFO (captures INFO, WARNING, ERROR, and CRITICAL)
     logger.setLevel(logging.INFO)
 
-    # Prevent appending redundant handlers on repeated setups
+    # Prevent appending redundant handlers on repeated setup calls
     if logger.handlers:
         return logger
 
-    # Define standard format for all log entries
+    # Define standard format for all log entries (Timestamp - Severity - Message)
     formatter = logging.Formatter(
-        "%(asctime)s - %(levelname)-8s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
+        "%(asctime)s - %(levelname)-8s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
     )
 
     # 1. Output Handler for Log File
@@ -46,7 +48,7 @@ def setup_logger():
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
 
-    # Attach handlers to root logger
+    # Attach handlers to root logger instance
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
